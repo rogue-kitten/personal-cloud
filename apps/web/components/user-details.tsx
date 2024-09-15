@@ -14,7 +14,7 @@ function UserDetails() {
   const user = data.data.user;
 
   return (
-    <div className='h-[315px] w-[315px] rounded-xl m-4 p-8 flex flex-col bg-blue-200 hover:scale-[1.03] transition-all duration-300'>
+    <div className='backdrop-blur-15 bg-profile-gradient backdrop-saturate-86 m-4 flex h-[315px] w-[315px] flex-col rounded-2xl p-8 transition-all duration-300 hover:scale-[1.03]'>
       <Image
         src={
           user.image ??
@@ -25,8 +25,8 @@ function UserDetails() {
         width={95}
         height={95}
       />
-      <div className='mt-auto flex flex-col gap-5 mb-5'>
-        <p className='font-semibold text-3xl'>{user.name}</p>
+      <div className='mb-5 mt-auto flex flex-col gap-5'>
+        <p className='text-3xl font-semibold'>{user.name}</p>
         <p className='font-semibold'>iCloud</p>
       </div>
     </div>

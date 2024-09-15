@@ -9,6 +9,16 @@ const config: Config = withUt({
   ],
   theme: {
     extend: {
+      backdropBlur: {
+        '15': '15px',
+      },
+      backdropSaturate: {
+        '86': '86%',
+      },
+      backgroundImage: {
+        'profile-gradient':
+          'radial-gradient(circle at 100% 0, hsla(0, 0%, 100%, .85) 0, hsla(0, 0%, 96.1%, .13) 183%)',
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

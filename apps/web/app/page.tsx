@@ -22,9 +22,11 @@ export default async function Home() {
 
   return (
     <Hydrate state={dehydrate(helpers.queryClient)}>
-      <main className=' max-w-5xl flex mx-auto'>
-        <UserDetails />
-        <Images />
+      <main className='h-screen w-screen bg-[url(https://www.icloud.com/system/icloud.com/current/wallpaper.webp)] bg-cover bg-center bg-no-repeat'>
+        <div className='mx-auto flex max-w-5xl py-10'>
+          <UserDetails />
+          <Images />
+        </div>
       </main>
     </Hydrate>
   );

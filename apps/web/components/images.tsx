@@ -20,21 +20,21 @@ function Images() {
   const images = data.data.files;
 
   return (
-    <div className='h-[315px] w-[660px] p-0 overflow-hidden rounded-xl m-4 bg-blue-200 hover:scale-[1.03] transition-all duration-300'>
-      <div className='bg-gray-200 -mt-2.5 pt-2.5 pb-px w-full'>
-        <div className='px-4 py-2 m-2.5'>
+    <div className='m-4 h-[315px] w-[660px] overflow-hidden rounded-2xl bg-blue-200 bg-transparent p-0 transition-all duration-300 hover:scale-[1.03]'>
+      <div className='backdrop-blur-15 backdrop-saturate-86 -mt-2.5 w-full bg-[#f8f8fcd9] pb-px pt-2.5'>
+        <div className='m-2.5 px-4 py-2'>
           <div className='flex items-center gap-2'>
             <PhotosIcon />
             <div>
-              <p className='font-medium leading-6 text-xl'>Photos</p>
+              <p className='text-xl font-medium leading-6'>Photos</p>
               <p className='text-sm text-gray-500'>{count} Photos</p>
             </div>
           </div>
         </div>
       </div>
-      <div className='flex w-full flex-wrap flex-shrink-0'>
+      <div className='flex w-full flex-shrink-0 flex-wrap bg-gray-100'>
         {images.map((img) => (
-          <div key={img.id} className='w-[162px] overflow-hidden h-[117px]'>
+          <div key={img.id} className='h-[117px] w-[162px] overflow-hidden'>
             <Image
               src={img.fileId}
               alt={img.fileName}
