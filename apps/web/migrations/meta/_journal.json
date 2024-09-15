@@ -8,6 +8,20 @@
       "when": 1726328173070,
       "tag": "0000_icy_leo",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1726392925137,
+      "tag": "0001_yielding_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726404087493,
+      "tag": "0002_stale_ben_grimm",
+      "breakpoints": true
     }
   ]
 }

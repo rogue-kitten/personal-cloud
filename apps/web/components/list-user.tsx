@@ -1,12 +1,19 @@
 'use client';
 
 import { trpc } from '@/utils/trpc';
+import { TRPCError } from '@trpc/server';
+import { signOut } from 'next-auth/react';
 
 export default function ListUsers() {
   const { data } = trpc.user.getUsers.useQuery({ limit: 10, page: 1 });
 
+  if (data instanceof TRPCError) {
+    return <div>Error while getting the user</div>;
+  }
+
   return (
     <>
+      <button onClick={() => signOut({ redirect: true })}>Sign out</button>
       {data?.data.selected_users.length === 0 ? (
         <p className='text-center'>No Users Found</p>
       ) : (

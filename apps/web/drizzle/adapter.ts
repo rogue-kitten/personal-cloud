@@ -12,7 +12,6 @@ import {
   NewAuthenticator,
   sessions,
   users,
-  verificationTokens,
 } from './schema';
 
 export const drizzleAdapter = {
@@ -20,7 +19,6 @@ export const drizzleAdapter = {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
   }),
 
   getAccount: async (providerAccountId: string, provider: string) => {
@@ -48,6 +46,7 @@ export const drizzleAdapter = {
       .select()
       .from(Authenticator)
       .where(eq(Authenticator.id, id));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { transports, id: _, ...rest } = authenticator;
     return { ...rest, transports: transports ?? undefined };
   },

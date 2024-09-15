@@ -34,8 +34,6 @@ export const publicProcedure = t.procedure;
 const validate_token = t.middleware(({ ctx, next }) => {
   const token = ctx?.headers?.get('x-api-key');
 
-  console.log('token', token);
-
   // we have hardcoded the authentication token to foobarbaz
   if (!token || token !== 'foobarbaz')
     throw new TRPCError({
@@ -49,13 +47,13 @@ const validate_token = t.middleware(({ ctx, next }) => {
 });
 
 const is_authenticated = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.session || !ctx.session.user || !ctx.session.user.id) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 
   return next({
     ctx: {
-      session: { ...ctx.session, user: ctx.session.user },
+      userId: ctx.session.user.id!,
     },
   });
 });

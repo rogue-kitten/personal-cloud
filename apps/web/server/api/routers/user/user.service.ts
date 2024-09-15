@@ -18,6 +18,7 @@ export const createUserHandler = async ({
         user,
       },
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err instanceof TRPCError) return err;
     throw new TRPCError({
@@ -47,7 +48,6 @@ export const getUsersHandler = async ({
         .offset(skip)
         .limit(take);
     } else {
-      console.log('getting the users from the else block', skip, take);
       selected_users = await db.select().from(users).offset(skip).limit(take);
     }
 
@@ -58,6 +58,7 @@ export const getUsersHandler = async ({
         selected_users,
       },
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err instanceof TRPCError) return err;
     throw new TRPCError({
