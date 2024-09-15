@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
-import ListNotes from '@/components/list-notes';
-import ListUsers from '@/components/list-user';
+import Images from '@/components/images';
+import UserDetails from '@/components/user-details';
 import Hydrate from '@/utils/hydrate-client';
 import { createSSRHelper } from '@/utils/ssrHelper';
 import { dehydrate } from '@tanstack/react-query';
@@ -16,20 +16,15 @@ export default async function Home() {
   }
 
   await Promise.all([
-    helpers.user.getUsers.prefetch({ limit: 10, page: 1 }),
-    helpers.notes.getNotesForUser.prefetch({ all: false }),
-    helpers.files.getFiles.prefetch({
-      page: 1,
-      limit: 10,
-    }),
+    helpers.user.getUserDetails.prefetch(),
+    helpers.files.getFiles.prefetch({ fileType: 'image', page: 1, limit: 8 }),
   ]);
 
   return (
     <Hydrate state={dehydrate(helpers.queryClient)}>
-      <main style={{ maxWidth: 1200, marginInline: 'auto', padding: 20 }}>
-        <p>{JSON.stringify(session, null, 2)}</p>
-        <ListUsers />
-        <ListNotes />
+      <main className=' max-w-5xl flex mx-auto'>
+        <UserDetails />
+        <Images />
       </main>
     </Hydrate>
   );

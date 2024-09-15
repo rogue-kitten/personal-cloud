@@ -1,7 +1,7 @@
 import { db } from '@/drizzle';
 import { SelectedUser, users } from '@/drizzle/schema';
 import { TRPCError } from '@trpc/server';
-import { like } from 'drizzle-orm';
+import { eq, like } from 'drizzle-orm';
 import { CreateUserInput, FilterQueryInput } from './user.schema';
 
 export const createUserHandler = async ({
@@ -58,12 +58,34 @@ export const getUsersHandler = async ({
         selected_users,
       },
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
+  } catch (err) {
     if (err instanceof TRPCError) return err;
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
-      message: err.message,
+      message: 'Some error occured',
+    });
+  }
+};
+
+export const getUserDetailsById = async ({ userId }: { userId: string }) => {
+  try {
+    const user = await db.select().from(users).where(eq(users.id, userId));
+
+    if (!user || user.length === 0) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+    }
+
+    return {
+      status: 'success',
+      data: {
+        user: user[0],
+      },
+    };
+  } catch (err) {
+    if (err instanceof TRPCError) return err;
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Some error occured',
     });
   }
 };

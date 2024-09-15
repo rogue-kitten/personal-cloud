@@ -1,7 +1,7 @@
 import { db } from '@/drizzle';
 import { files, SelectedFiles } from '@/drizzle/schema';
 import { TRPCError } from '@trpc/server';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { FilterQueryInput, UploadFile } from './files.schema';
 
 export const uploadFileForUser = async ({
@@ -49,6 +49,8 @@ export const getFilesForUser = async ({
 
     let userFiles: SelectedFiles[] = [];
 
+    let document_count = 0;
+
     if (fileType) {
       userFiles = await db
         .select()
@@ -56,6 +58,13 @@ export const getFilesForUser = async ({
         .where(and(eq(files.userId, userId), eq(files.fileType, fileType)))
         .offset(skip)
         .limit(take);
+
+      document_count = (
+        await db
+          .select({ count: count() })
+          .from(files)
+          .where(and(eq(files.userId, userId), eq(files.fileType, fileType)))
+      )[0].count;
     } else {
       userFiles = await db
         .select()
@@ -63,12 +72,19 @@ export const getFilesForUser = async ({
         .where(and(eq(files.userId, userId)))
         .offset(skip)
         .limit(take);
+      document_count = (
+        await db
+          .select({ count: count() })
+          .from(files)
+          .where(and(eq(files.userId, userId)))
+      )[0].count;
     }
 
     return {
       status: 'success',
       data: {
         files: userFiles,
+        count: document_count,
       },
     };
   } catch (error) {
