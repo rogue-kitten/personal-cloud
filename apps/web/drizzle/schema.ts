@@ -121,3 +121,6 @@ export const files = pgTable('files', {
   fileSize: integer('fileSize').notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
 });
+
+export type SelectedFiles = typeof files.$inferSelect;
+export type InsertFiles = typeof files.$inferInsert;

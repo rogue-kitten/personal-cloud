@@ -18,6 +18,10 @@ export default async function Home() {
   await Promise.all([
     helpers.user.getUsers.prefetch({ limit: 10, page: 1 }),
     helpers.notes.getNotesForUser.prefetch({ all: false }),
+    helpers.files.getFiles.prefetch({
+      page: 1,
+      limit: 10,
+    }),
   ]);
 
   return (
