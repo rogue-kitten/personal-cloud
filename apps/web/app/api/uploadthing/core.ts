@@ -30,6 +30,7 @@ const onUploadComplete = async ({
       payload: {
         fileId: file.url,
         fileType,
+        mimeType: file.type,
         fileSize: file.size,
         fileName: file.name,
       },
@@ -50,15 +51,15 @@ export const ourFileRouter = {
       onUploadComplete({
         ...opts,
         fileType: 'image',
-      })
+      }),
     ),
-  fileUploader: f({ blob: { maxFileSize: '4MB' } })
+  fileUploader: f({ blob: { maxFileSize: '16MB' } })
     .middleware(middleware)
     .onUploadComplete(async (opts) =>
       onUploadComplete({
         ...opts,
         fileType: 'document',
-      })
+      }),
     ),
 } satisfies FileRouter;
 

@@ -27,7 +27,7 @@ export const users = pgTable(
     return {
       uniqueIdx: uniqueIndex('unique_idx').on(users.email),
     };
-  }
+  },
 );
 
 export type SelectedUser = typeof users.$inferSelect;
@@ -53,7 +53,7 @@ export const accounts = pgTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-  })
+  }),
 );
 
 export const sessions = pgTable('session', {
@@ -83,9 +83,9 @@ export const Authenticator = pgTable(
   },
   (authenticator) => ({
     userIdIdx: uniqueIndex('Authenticator_credentialID_key').on(
-      authenticator.credentialID
+      authenticator.credentialID,
     ),
-  })
+  }),
 );
 
 export type NewAuthenticator = typeof Authenticator.$inferInsert;
@@ -118,6 +118,7 @@ export const files = pgTable('files', {
   fileName: text('fileName').notNull(),
   fileId: text('fileId').notNull(),
   fileType: fileTypeEnum('fileType').default('document').notNull(),
+  mimeType: text('mimeType').notNull(),
   fileSize: integer('fileSize').notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
 });

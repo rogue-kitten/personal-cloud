@@ -10,6 +10,9 @@ export const uploadFile = z.object({
   fileType: z.enum(['image', 'document'], {
     required_error: 'File Type is required',
   }),
+  mimeType: z
+    .string({ required_error: 'Mime Type is required' })
+    .min(1, { message: 'Mime Type cannot be empty' }),
   fileSize: z.number({ required_error: 'File Size is required' }),
 });
 
