@@ -3,7 +3,8 @@
 import { trpc } from '@/utils/trpc';
 import { TRPCError } from '@trpc/server';
 import Image from 'next/image';
-import PhotosIcon from './icons/photos';
+import Grid from './grid';
+import IcoWrapper from './iconWrapper';
 
 function Images() {
   const { data } = trpc.files.getFiles.useQuery({
@@ -20,33 +21,37 @@ function Images() {
   const images = data.data.files;
 
   return (
-    <div className='m-4 h-[315px] w-[660px] overflow-hidden rounded-2xl bg-blue-200 bg-transparent p-0 transition-all duration-300 hover:scale-[1.03]'>
-      <div className='backdrop-blur-15 backdrop-saturate-86 -mt-2.5 w-full bg-[#f8f8fcd9] pb-px pt-2.5'>
-        <div className='m-2.5 px-4 py-2'>
-          <div className='flex items-center gap-2'>
-            <PhotosIcon />
-            <div>
-              <p className='text-xl font-medium leading-6'>Photos</p>
-              <p className='text-sm text-gray-500'>{count} Photos</p>
+    <Grid
+      headerIcon={
+        <IcoWrapper imageSrc='https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png' />
+      }
+      headerText='Photos'
+      headerSubtext={`${count} photos`}
+      cardContent={
+        <>
+          {count > 0 ? (
+            images.map((img) => (
+              <div key={img.id} className='h-[117px] w-[162px] overflow-hidden'>
+                <Image
+                  src={img.fileId}
+                  alt={img.fileName}
+                  key={img.id}
+                  width={165}
+                  height={117}
+                  className='object-cover'
+                />
+              </div>
+            ))
+          ) : (
+            <div className='relative h-full w-full bg-gray-100 text-gray-500'>
+              <div className='absolute right-1/2 top-1/2 -translate-y-1/2 translate-x-1/2 text-center'>
+                <p>0 photos</p>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className='flex w-full flex-shrink-0 flex-wrap bg-gray-100'>
-        {images.map((img) => (
-          <div key={img.id} className='h-[117px] w-[162px] overflow-hidden'>
-            <Image
-              src={img.fileId}
-              alt={img.fileName}
-              key={img.id}
-              width={165}
-              height={117}
-              className='object-cover'
-            />
-          </div>
-        ))}
-      </div>
-    </div>
+          )}
+        </>
+      }
+    />
   );
 }
 

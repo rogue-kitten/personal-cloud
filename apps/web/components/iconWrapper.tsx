@@ -1,4 +1,6 @@
-function PhotosIcon() {
+import Image from 'next/image';
+
+function IconWrapper({ imageSrc, alt }: { imageSrc: string; alt?: string }) {
   return (
     <svg
       className='icon-with-border'
@@ -17,22 +19,17 @@ function PhotosIcon() {
           height='40'
           requiredFeatures='http://www.w3.org/TR/SVG11/feature#Extensibility'
         >
-          <img
+          <Image
             draggable='false'
-            src='	https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png'
-            srcSet='
-              	https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png,
-              https://www.icloud.com/system/icloud.com/2420Hotfix12/21e17b6bfad7abb901b527fe7de7e6ff.png 2x,
-              https://www.icloud.com/system/icloud.com/2420Hotfix12/12497b1d05de2780908cd28a1da03442.png 3x
-            '
-            width='40'
-            height='40'
+            src={imageSrc}
+            width={40}
+            height={40}
             aria-hidden='true'
-            alt=''
+            alt={alt ?? ''}
           />
         </foreignObject>
         <image
-          xlinkHref='	https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png'
+          xlinkHref='https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png'
           x='0'
           y='0'
           width='40'
@@ -52,4 +49,4 @@ function PhotosIcon() {
   );
 }
 
-export default PhotosIcon;
+export default IconWrapper;

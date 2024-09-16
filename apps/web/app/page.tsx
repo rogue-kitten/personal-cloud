@@ -1,4 +1,5 @@
 import { auth } from '@/auth';
+import Files from '@/components/files';
 import Images from '@/components/images';
 import UserDetails from '@/components/user-details';
 import Hydrate from '@/utils/hydrate-client';
@@ -23,9 +24,10 @@ export default async function Home() {
   return (
     <Hydrate state={dehydrate(helpers.queryClient)}>
       <main className='h-screen w-screen bg-[url(https://www.icloud.com/system/icloud.com/current/wallpaper.webp)] bg-cover bg-center bg-no-repeat'>
-        <div className='mx-auto flex max-w-5xl py-10'>
+        <div className='mx-auto flex max-w-6xl flex-wrap py-10'>
           <UserDetails />
           <Images />
+          <Files />
         </div>
       </main>
     </Hydrate>
