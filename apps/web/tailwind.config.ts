@@ -20,8 +20,7 @@ const config: Config = withUt({
           'radial-gradient(circle at 100% 0, hsla(0, 0%, 100%, .85) 0, hsla(0, 0%, 96.1%, .13) 183%)',
       },
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
+        hover_grey: '#e8e8edcc',
       },
     },
   },

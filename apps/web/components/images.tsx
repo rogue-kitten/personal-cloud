@@ -5,6 +5,7 @@ import { TRPCError } from '@trpc/server';
 import Image from 'next/image';
 import Grid from './grid';
 import IcoWrapper from './iconWrapper';
+import UploadButton from './uploadButton';
 
 function Images() {
   const { data } = trpc.files.getFiles.useQuery({
@@ -17,16 +18,31 @@ function Images() {
     return <>error</>;
   }
 
+  const utils = trpc.useUtils();
+
   const count = data.data.count;
   const images = data.data.files;
 
   return (
     <Grid
       headerIcon={
-        <IcoWrapper imageSrc='https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png' />
+        <IcoWrapper
+          alt='Photos Icon'
+          imageSrc='https://www.icloud.com/system/icloud.com/2420Hotfix12/3d9f23365cbc27cd1ac7f1acc1b3f087.png'
+        />
       }
       headerText='Photos'
       headerSubtext={`${count} photos`}
+      optionIcon={
+        <UploadButton
+          onClientUploadComplete={() => {
+            console.log('success log has been done');
+            utils.files.getFiles.invalidate();
+          }}
+          endpoint='imageUploader'
+          acceptedFileTypes='image/*'
+        />
+      }
       cardContent={
         <>
           {count > 0 ? (

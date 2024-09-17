@@ -6,6 +6,7 @@ import { fromMime } from 'human-filetypes';
 import Grid from './grid';
 import IconWrapper from './iconWrapper';
 import PdfIcon from './icons/pdf';
+import UploadButton from './uploadButton';
 
 function Files() {
   const { data } = trpc.files.getFiles.useQuery({
@@ -18,16 +19,30 @@ function Files() {
     return <>error</>;
   }
 
+  const utils = trpc.useUtils();
+
   const count = data.data.count;
   const files = data.data.files;
 
   return (
     <Grid
       headerIcon={
-        <IconWrapper imageSrc='https://www.icloud.com/system/icloud.com/2420Hotfix12/721bdfc3241b42114d62842854461ae7.png' />
+        <IconWrapper
+          alt='File Icon'
+          imageSrc='https://www.icloud.com/system/icloud.com/2420Hotfix12/721bdfc3241b42114d62842854461ae7.png'
+        />
       }
       headerText='Drive'
       headerSubtext='Recently Added'
+      optionIcon={
+        <UploadButton
+          onClientUploadComplete={() => {
+            console.log('success log has been done');
+            utils.files.getFiles.invalidate();
+          }}
+          endpoint='fileUploader'
+        />
+      }
       cardContent={
         <>
           {count > 0 ? (
@@ -35,7 +50,7 @@ function Files() {
               {files.map((file) => (
                 <div
                   key={file.id}
-                  className='flex items-center gap-4 rounded-md p-2.5 transition-all duration-300 hover:bg-[#e8e8edcc]'
+                  className='flex items-center gap-4 rounded-md p-2.5 transition-all duration-300 hover:bg-hover_grey'
                 >
                   <PdfIcon />
                   <div className='space-y-1 overflow-hidden text-black/80'>

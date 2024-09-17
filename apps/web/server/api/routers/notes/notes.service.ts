@@ -18,7 +18,7 @@ export const getNotesForUser = async ({ all, userId }: GetNotesForUser) => {
         .select()
         .from(notes)
         .where(eq(notes.userId, userId))
-        .limit(9)
+        .limit(3)
         .orderBy(desc(notes.createdAt));
     }
 

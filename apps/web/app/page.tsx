@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import Files from '@/components/files';
 import Images from '@/components/images';
+import Notes from '@/components/notes';
 import UserDetails from '@/components/user-details';
 import Hydrate from '@/utils/hydrate-client';
 import { createSSRHelper } from '@/utils/ssrHelper';
@@ -19,6 +20,12 @@ export default async function Home() {
   await Promise.all([
     helpers.user.getUserDetails.prefetch(),
     helpers.files.getFiles.prefetch({ fileType: 'image', page: 1, limit: 8 }),
+    helpers.files.getFiles.prefetch({
+      fileType: 'document',
+      page: 1,
+      limit: 6,
+    }),
+    helpers.notes.getNotesForUser.prefetch({}),
   ]);
 
   return (
@@ -28,6 +35,7 @@ export default async function Home() {
           <UserDetails />
           <Images />
           <Files />
+          <Notes />
         </div>
       </main>
     </Hydrate>

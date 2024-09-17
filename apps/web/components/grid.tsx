@@ -8,6 +8,7 @@ interface GridProps {
   cardContent?: ReactNode;
   emptyStateComponent?: ReactNode;
   size?: 'small' | 'large';
+  optionIcon?: ReactNode;
 }
 
 function Grid({
@@ -16,6 +17,7 @@ function Grid({
   headerText,
   headerSubtext,
   size = 'large',
+  optionIcon,
 }: GridProps) {
   return (
     <div
@@ -26,16 +28,19 @@ function Grid({
     >
       <div className='-mt-2.5 w-full bg-[#f8f8fcd9] pb-px pt-2.5 backdrop-blur-15 backdrop-saturate-86'>
         <div className='m-2.5 px-4 py-2'>
-          <div className='flex items-center gap-2'>
-            {headerIcon}
-            <div>
-              <p className='text-xl font-medium leading-6'>{headerText}</p>
-              <p className='text-sm text-gray-500'>{headerSubtext}</p>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              {headerIcon}
+              <div>
+                <p className='text-xl font-medium leading-6'>{headerText}</p>
+                <p className='text-sm text-gray-500'>{headerSubtext}</p>
+              </div>
             </div>
+            {optionIcon}
           </div>
         </div>
       </div>
-      <div className='flex h-[235px] w-full flex-shrink-0 flex-wrap'>
+      <div className='flex h-[235px] w-full flex-shrink-0 flex-wrap bg-hover_grey'>
         {cardContent}
       </div>
     </div>
