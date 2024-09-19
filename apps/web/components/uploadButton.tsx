@@ -2,6 +2,7 @@ import { useUploadThing } from '@/utils/uploadThing-helpers';
 import { CirclePlus } from 'lucide-react';
 import { ClientUploadedFileData } from 'uploadthing/types';
 import Spinner from './icons/spinner';
+import { Button } from './ui/button';
 
 interface UploadButtonProps {
   endpoint: 'imageUploader' | 'fileUploader';
@@ -31,8 +32,10 @@ const UploadButton = ({
   };
 
   return (
-    <button
-      className='relative cursor-pointer overflow-hidden'
+    <Button
+      variant={'ghost'}
+      size={'icon'}
+      className='relative cursor-pointer overflow-hidden hover:bg-transparent'
       disabled={isUploading}
     >
       <input
@@ -42,7 +45,7 @@ const UploadButton = ({
         accept={acceptedFileTypes}
       />
       {isUploading ? <Spinner className='text-blue-500' /> : <CirclePlus />}
-    </button>
+    </Button>
   );
 };
 

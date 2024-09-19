@@ -28,7 +28,7 @@ const onUploadComplete = async ({
   try {
     await uploadFileForUser({
       payload: {
-        fileId: file.url,
+        fileId: file.key,
         fileType,
         mimeType: file.type,
         fileSize: file.size,

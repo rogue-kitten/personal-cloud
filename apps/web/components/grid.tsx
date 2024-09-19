@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn';
+import { cn } from '@/utils/utils';
 import { ReactNode } from 'react';
 
 interface GridProps {
@@ -21,10 +21,10 @@ function Grid({
 }: GridProps) {
   return (
     <div
-      className={cn([
+      className={cn(
         'm-4 h-[315px] overflow-hidden rounded-2xl bg-transparent p-0 transition-all duration-300 hover:scale-[1.03]',
         size === 'large' ? 'w-[660px]' : 'w-[315px]',
-      ])}
+      )}
     >
       <div className='-mt-2.5 w-full bg-[#f8f8fcd9] pb-px pt-2.5 backdrop-blur-15 backdrop-saturate-86'>
         <div className='m-2.5 px-4 py-2'>

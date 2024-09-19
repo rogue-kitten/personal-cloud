@@ -25,3 +25,11 @@ export const filterQuery = z.object({
 });
 
 export type FilterQueryInput = z.TypeOf<typeof filterQuery>;
+
+export const deleteQuery = z.object({
+  id: z
+    .string({ required_error: 'Id is required' })
+    .uuid({ message: 'id must be an uuid' }),
+});
+
+export type DeleteQuery = z.TypeOf<typeof deleteQuery>;

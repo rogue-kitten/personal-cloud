@@ -2,7 +2,8 @@ import { db } from '@/drizzle';
 import { files, SelectedFiles } from '@/drizzle/schema';
 import { TRPCError } from '@trpc/server';
 import { and, count, eq } from 'drizzle-orm';
-import { FilterQueryInput, UploadFile } from './files.schema';
+import { utapi } from '../../uploadthing';
+import { DeleteQuery, FilterQueryInput, UploadFile } from './files.schema';
 
 export const uploadFileForUser = async ({
   payload,
@@ -92,6 +93,44 @@ export const getFilesForUser = async ({
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Something went wrong',
+    });
+  }
+};
+
+export const deleteFile = async ({
+  payload,
+}: {
+  payload: DeleteQuery & { userId: string };
+}) => {
+  try {
+    const file = await db
+      .select()
+      .from(files)
+      .where(eq(files.id, payload.id))
+      .limit(1);
+
+    if (!files || file.length === 0)
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'File not found' });
+
+    if (file[0].userId != payload.userId)
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'only the file owner can delete the file ',
+      });
+
+    await utapi.deleteFiles([file[0].fileId]);
+
+    await db.delete(files).where(eq(files.id, payload.id));
+
+    return {
+      status: 'success',
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) return error;
+
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Error occured while deleting the file',
     });
   }
 };

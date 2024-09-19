@@ -1,11 +1,23 @@
 'use client';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { trpc } from '@/utils/trpc';
+import { downloadFileFromURL } from '@/utils/utils';
 import { TRPCError } from '@trpc/server';
 import { fromMime } from 'human-filetypes';
+import { DownloadIcon, EllipsisIcon, TrashIcon } from 'lucide-react';
+import { useEffect } from 'react';
 import Grid from './grid';
 import IconWrapper from './iconWrapper';
 import PdfIcon from './icons/pdf';
+import Spinner from './icons/spinner';
 import UploadButton from './uploadButton';
 
 function Files() {
@@ -14,6 +26,24 @@ function Files() {
     page: 1,
     fileType: 'document',
   });
+
+  const {
+    mutate: deleteFile,
+    data: deleteData,
+    isLoading: isDeleting,
+  } = trpc.files.deleteFile.useMutation();
+
+  useEffect(() => {
+    if (deleteData && !isDeleting) {
+      if (deleteData instanceof TRPCError) {
+        console.log('there was some error while deleting');
+      } else {
+        console.log('Deleted file successfully');
+        utils.files.getFiles.invalidate();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteData, isDeleting]);
 
   if (!data || data instanceof TRPCError) {
     return <>error</>;
@@ -50,7 +80,7 @@ function Files() {
               {files.map((file) => (
                 <div
                   key={file.id}
-                  className='flex items-center gap-4 rounded-md p-2.5 transition-all duration-300 hover:bg-hover_grey'
+                  className='group relative flex items-center gap-4 rounded-md p-2.5 transition-all duration-300 hover:bg-hover_grey'
                 >
                   <PdfIcon />
                   <div className='space-y-1 overflow-hidden text-black/80'>
@@ -60,6 +90,45 @@ function Files() {
                     <p className='text-xs capitalize'>
                       {fromMime(file.mimeType)}
                     </p>
+                  </div>
+                  <div className='absolute inset-0'>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className='absolute right-2 top-2 max-h-[12px] w-[23px] rounded-full bg-hover_grey opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                        <EllipsisIcon className='h-[12px] w-[23px] text-black' />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align='end'>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            deleteFile({ id: file.id });
+                          }}
+                          className='text-xs text-red-500'
+                        >
+                          Delete
+                          <DropdownMenuShortcut>
+                            {isDeleting ? (
+                              <Spinner className='h-4 w-4' />
+                            ) : (
+                              <TrashIcon className='h-4 w-4' />
+                            )}
+                          </DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            downloadFileFromURL({
+                              fileName: file.fileName,
+                              fileURL: `https://utfs.io/f/${file.fileId}`,
+                            });
+                          }}
+                          className='text-xs text-gray-600'
+                        >
+                          Download
+                          <DropdownMenuShortcut>
+                            <DownloadIcon className='h-4 w-4' />
+                          </DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               ))}
