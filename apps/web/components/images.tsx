@@ -14,6 +14,7 @@ import { TRPCError } from '@trpc/server';
 import { DownloadIcon, EllipsisIcon, TrashIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import Grid from './grid';
 import Spinner from './icons/spinner';
 import IcoWrapper from './iconWrapper';
@@ -27,7 +28,7 @@ function Images() {
   });
 
   const {
-    mutate: deleteImage,
+    mutateAsync: deleteImage,
     data: deleteData,
     isLoading: isDeleting,
   } = trpc.files.deleteFile.useMutation();
@@ -97,7 +98,13 @@ function Images() {
                     <DropdownMenuContent align='end'>
                       <DropdownMenuItem
                         onClick={() => {
-                          deleteImage({ id: img.id });
+                          const deletePromise = deleteImage({ id: img.id });
+
+                          toast.promise(deletePromise, {
+                            loading: 'Deleting...',
+                            success: 'Image deleted successfully',
+                            error: 'Error occured while deleting the image',
+                          });
                         }}
                         className='text-xs text-red-500'
                       >
@@ -113,9 +120,14 @@ function Images() {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => {
-                          downloadFileFromURL({
+                          const downloadPromise = downloadFileFromURL({
                             fileName: img.fileName,
                             fileURL: `https://utfs.io/f/${img.fileId}`,
+                          });
+                          toast.promise(downloadPromise, {
+                            loading: 'Downloading ....',
+                            success: 'Image downloaded successfully',
+                            error: 'Error occured while downloading the image',
                           });
                         }}
                         className='text-xs text-gray-600'

@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner';
 import { TrpcProvider } from '@/utils/trpc-client';
 import type { Metadata } from 'next';
 import './globals.css';
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className='font-sans'>
+        <Toaster />
         <TrpcProvider>{children}</TrpcProvider>
       </body>
     </html>

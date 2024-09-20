@@ -12,7 +12,7 @@ export function downloadFileFromURL({
   fileURL: string;
   fileName: string;
 }) {
-  fetch(fileURL, {
+  const promise = fetch(fileURL, {
     method: 'GET',
     headers: {},
   })
@@ -30,4 +30,6 @@ export function downloadFileFromURL({
     .catch((err) => {
       console.log(err);
     });
+
+  return promise;
 }

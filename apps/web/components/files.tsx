@@ -14,6 +14,7 @@ import { TRPCError } from '@trpc/server';
 import { fromMime } from 'human-filetypes';
 import { DownloadIcon, EllipsisIcon, TrashIcon } from 'lucide-react';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import Grid from './grid';
 import IconWrapper from './iconWrapper';
 import PdfIcon from './icons/pdf';
@@ -28,7 +29,7 @@ function Files() {
   });
 
   const {
-    mutate: deleteFile,
+    mutateAsync: deleteFile,
     data: deleteData,
     isLoading: isDeleting,
   } = trpc.files.deleteFile.useMutation();
@@ -99,7 +100,13 @@ function Files() {
                       <DropdownMenuContent align='end'>
                         <DropdownMenuItem
                           onClick={() => {
-                            deleteFile({ id: file.id });
+                            const deletePromise = deleteFile({ id: file.id });
+
+                            toast.promise(deletePromise, {
+                              loading: 'Deleting...',
+                              success: 'File deleted successfully',
+                              error: 'Error occured while deleting the file',
+                            });
                           }}
                           className='text-xs text-red-500'
                         >
@@ -115,9 +122,14 @@ function Files() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => {
-                            downloadFileFromURL({
+                            const downloadPromise = downloadFileFromURL({
                               fileName: file.fileName,
                               fileURL: `https://utfs.io/f/${file.fileId}`,
+                            });
+                            toast.promise(downloadPromise, {
+                              loading: 'Downloading ....',
+                              success: 'File downloaded successfully',
+                              error: 'Error occured while downloading the file',
                             });
                           }}
                           className='text-xs text-gray-600'
