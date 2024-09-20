@@ -1,13 +1,46 @@
 'use client';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { trpc } from '@/utils/trpc';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
+import {
+  CirclePlus,
+  DownloadIcon,
+  EllipsisIcon,
+  TrashIcon,
+} from 'lucide-react';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 import Grid from './grid';
+import Spinner from './icons/spinner';
 import IconWrapper from './iconWrapper';
+import NotesDialogue from './notesDialogue';
 
 function Notes() {
   const { data } = trpc.notes.getNotesForUser.useQuery({});
+
+  const utils = trpc.useUtils();
+
+  const {
+    mutateAsync: deleteNote,
+    data: deleteData,
+    isLoading: isDeleting,
+  } = trpc.notes.deleteNote.useMutation();
+
+  useEffect(() => {
+    if (deleteData && !isDeleting) {
+      utils.notes.getNotesForUser.invalidate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDeleting]);
 
   if (!data || data instanceof TRPCError) {
     return <>error</>;
@@ -19,13 +52,14 @@ function Notes() {
     <Grid
       size='small'
       headerText='Notes'
+      optionIcon={<NotesDialogue trigger={<CirclePlus />} />}
       cardContent={
         <div className='grid h-full w-full grid-cols-1 grid-rows-3 bg-white p-2.5'>
           {notes.length > 0 ? (
             notes.map((note) => (
               <div
                 key={note.id}
-                className='rounded-md py-2.5 pl-5 pr-2.5 hover:bg-hover_grey'
+                className='group relative rounded-md py-2.5 pl-5 pr-2.5 transition-all duration-300 hover:bg-hover_grey'
               >
                 <div className='flex flex-col gap-1'>
                   <p className='text-sm text-black/80'>{note.title}</p>
@@ -37,6 +71,56 @@ function Notes() {
                       <span className='text-black/50'>{note.note}</span>
                     </p>
                   </div>
+                </div>
+                <div className='absolute inset-0'>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className='absolute right-2 top-2 max-h-[12px] w-[23px] rounded-full bg-hover_grey opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                      <EllipsisIcon className='h-[12px] w-[23px] text-black' />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align='end'>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          const deletePromise = deleteNote({ id: note.id });
+
+                          toast.promise(deletePromise, {
+                            loading: 'Deleting...',
+                            success: 'note  deleted successfully',
+                            error: 'Error occured while deleting note',
+                          });
+                        }}
+                        className='text-xs text-red-500'
+                      >
+                        Delete
+                        <DropdownMenuShortcut>
+                          {isDeleting ? (
+                            <Spinner className='h-4 w-4' />
+                          ) : (
+                            <TrashIcon className='h-4 w-4' />
+                          )}
+                        </DropdownMenuShortcut>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <NotesDialogue
+                          key={note.id}
+                          triggerAsChild
+                          trigger={
+                            <div className='flex w-full select-none items-center justify-between rounded-sm px-2 py-1.5 text-xs text-gray-600 hover:bg-accent hover:text-accent-foreground'>
+                              <div>
+                                <p>Edit</p>
+                              </div>
+                              <DownloadIcon className='h-4 w-4' />
+                            </div>
+                          }
+                          id={note.id}
+                          defaultValues={{
+                            note: note.note,
+                            title: note.title,
+                          }}
+                        />
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ))

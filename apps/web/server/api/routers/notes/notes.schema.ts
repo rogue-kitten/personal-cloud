@@ -32,3 +32,11 @@ export const editNotes = z.object({
 });
 
 export type EditNotes = z.TypeOf<typeof editNotes>;
+
+export const deleteNote = z.object({
+  id: z.string({ required_error: 'id is required' }).uuid('id must be a uuid'),
+});
+
+export type DeleteNote = z.TypeOf<typeof deleteNote> & {
+  userId: string;
+};

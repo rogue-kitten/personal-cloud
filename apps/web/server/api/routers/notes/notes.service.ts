@@ -2,7 +2,7 @@ import { db } from '@/drizzle';
 import { InsertNotes, notes, SelectedNotes } from '@/drizzle/schema';
 import { TRPCError } from '@trpc/server';
 import { desc, eq } from 'drizzle-orm';
-import { EditNotes, GetNotesForUser } from './notes.schema';
+import { DeleteNote, EditNotes, GetNotesForUser } from './notes.schema';
 
 export const getNotesForUser = async ({ all, userId }: GetNotesForUser) => {
   try {
@@ -98,6 +98,36 @@ export const editNoteForUser = async ({
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Unexpected Error',
+    });
+  }
+};
+
+export const deleteNoteById = async ({ payload }: { payload: DeleteNote }) => {
+  try {
+    const { id, userId } = payload;
+
+    const note = await db.select().from(notes).where(eq(notes.id, id));
+
+    if (!note || note.length === 0) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Note not found' });
+    }
+
+    if (note[0].userId != userId)
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'You can only delete your notes',
+      });
+
+    await db.delete(notes).where(eq(notes.id, id));
+
+    return {
+      status: 'success',
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) return error;
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Something went wrong',
     });
   }
 };
