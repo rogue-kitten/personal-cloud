@@ -1,7 +1,7 @@
 import { db } from '@/drizzle';
 import { SelectedUser, users } from '@/drizzle/schema';
 import { TRPCError } from '@trpc/server';
-import { eq, like } from 'drizzle-orm';
+import { count, eq, sql } from 'drizzle-orm';
 import {
   CreateUserInput,
   EditPersonalDetails,
@@ -40,30 +40,44 @@ export const getUsersHandler = async ({
   try {
     const { limit, page, name } = filterQuery;
     const take = limit || 10;
-    const skip = (page - 1) * limit;
+    const skip = Math.max((page - 1) * limit, 0);
 
     let selected_users: SelectedUser[] = [];
+    let match_count: number = 0;
 
     if (name && name.length > 0) {
+      const matchString = `%${name}%`;
+
+      const counts = await db
+        .select({ count: count() })
+        .from(users)
+        .where(sql`LOWER(${users.name}) LIKE LOWER(${matchString})`);
+
+      match_count = counts?.[0]?.count ?? 0;
+
       selected_users = await db
         .select()
         .from(users)
-        .where(like(users.email, `%${name}%`))
+        .where(sql`LOWER(${users.name}) LIKE LOWER(${matchString})`)
         .offset(skip)
         .limit(take);
     } else {
+      const counts = await db.select({ count: count() }).from(users);
+
+      match_count = counts?.[0]?.count ?? 0;
       selected_users = await db.select().from(users).offset(skip).limit(take);
     }
 
     return {
       status: 'success',
-      results: selected_users.length,
+      results: match_count,
       data: {
         selected_users,
       },
     };
   } catch (err) {
     if (err instanceof TRPCError) return err;
+    console.log('error', err);
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Some error occured',
