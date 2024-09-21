@@ -125,7 +125,7 @@ function Notes() {
               </div>
             ))
           ) : (
-            <div className='relative h-full w-full text-gray-500'>
+            <div className='relative row-span-3 h-full w-full text-gray-500'>
               <div className='absolute right-1/2 top-1/2 -translate-y-1/2 translate-x-1/2 text-center'>
                 <p>0 notes</p>
               </div>

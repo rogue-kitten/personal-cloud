@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import Files from '@/components/files';
 import Images from '@/components/images';
 import Notes from '@/components/notes';
@@ -6,16 +5,9 @@ import UserDetails from '@/components/user-details';
 import Hydrate from '@/utils/hydrate-client';
 import { createSSRHelper } from '@/utils/ssrHelper';
 import { dehydrate } from '@tanstack/react-query';
-import { redirect } from 'next/navigation';
 
 export default async function Home() {
   const helpers = await createSSRHelper();
-
-  const session = await auth();
-  if (!session || !session.user) {
-    // navigate to the login page
-    redirect('/api/auth/signin');
-  }
 
   await Promise.all([
     helpers.user.getUserDetails.prefetch(),

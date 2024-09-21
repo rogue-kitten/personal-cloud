@@ -61,6 +61,16 @@ export const ourFileRouter = {
         fileType: 'document',
       }),
     ),
+  vanillaUploader: f({ blob: { maxFileSize: '4MB' } }).onUploadComplete(
+    () => {},
+  ),
+  // .middleware(middleware)
+  // .onUploadComplete(async (opts) =>
+  //   onUploadComplete({
+  //     ...opts,
+  //     fileType: 'image',
+  //   }),
+  // ),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

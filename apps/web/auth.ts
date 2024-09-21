@@ -8,6 +8,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   experimental: { enableWebAuthn: true },
   basePath: '/api/auth',
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    newUser: '/setup',
+  },
   callbacks: {
     async session({ session, user }) {
       session.user.id = user.id;

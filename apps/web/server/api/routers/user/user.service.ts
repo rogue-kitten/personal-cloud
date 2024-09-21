@@ -2,7 +2,11 @@ import { db } from '@/drizzle';
 import { SelectedUser, users } from '@/drizzle/schema';
 import { TRPCError } from '@trpc/server';
 import { eq, like } from 'drizzle-orm';
-import { CreateUserInput, FilterQueryInput } from './user.schema';
+import {
+  CreateUserInput,
+  EditPersonalDetails,
+  FilterQueryInput,
+} from './user.schema';
 
 export const createUserHandler = async ({
   input,
@@ -86,6 +90,37 @@ export const getUserDetailsById = async ({ userId }: { userId: string }) => {
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Some error occured',
+    });
+  }
+};
+
+export const editUser = async ({
+  payload,
+}: {
+  payload: EditPersonalDetails;
+}) => {
+  try {
+    const user = await db.select().from(users).where(eq(users.id, payload.id));
+
+    if (!user || user.length === 0)
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+
+    await db
+      .update(users)
+      .set({
+        name: payload.name,
+        image: payload.image ?? null,
+      })
+      .where(eq(users.id, payload.id));
+
+    return {
+      status: 'success',
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) return error;
+    return new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Something went wrong',
     });
   }
 };

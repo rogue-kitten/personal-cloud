@@ -13,3 +13,14 @@ export const filterQuery = z.object({
 
 export type CreateUserInput = z.TypeOf<typeof createUserSchema>;
 export type FilterQueryInput = z.TypeOf<typeof filterQuery>;
+
+export const editPersonalDetails = z.object({
+  name: z
+    .string({ required_error: 'Name is a required field' })
+    .min(0, { message: 'Name cannot be empty' }),
+  image: z.string().optional(),
+});
+
+export type EditPersonalDetails = z.TypeOf<typeof editPersonalDetails> & {
+  id: string;
+};
