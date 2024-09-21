@@ -8,12 +8,12 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { trpc } from '@/utils/trpc';
 import { downloadFileFromURL } from '@/utils/utils';
 import { TRPCError } from '@trpc/server';
 import { DownloadIcon, EllipsisIcon, TrashIcon } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
 import Grid from './grid';
 import Spinner from './icons/spinner';
@@ -21,35 +21,31 @@ import IcoWrapper from './iconWrapper';
 import UploadButton from './uploadButton';
 
 function Images() {
-  const { data } = trpc.files.getFiles.useQuery({
-    limit: 8,
+  const windowSize = useWindowWidth();
+
+  const { data, isLoading } = trpc.files.getFiles.useQuery({
+    limit: windowSize > 1024 ? 8 : 4,
     page: 1,
     fileType: 'image',
   });
 
   const {
     mutateAsync: deleteImage,
-    data: deleteData,
+    // data: deleteData,
     isLoading: isDeleting,
-  } = trpc.files.deleteFile.useMutation();
+  } = trpc.files.deleteFile.useMutation({
+    onSuccess: () => {
+      utils.files.getFiles.invalidate();
+    },
+  });
 
-  useEffect(() => {
-    if (deleteData && !isDeleting) {
-      if (deleteData instanceof TRPCError) {
-        console.log('there was some error while deleting');
-      } else {
-        console.log('Deleted file successfully');
-        utils.files.getFiles.invalidate();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteData, isDeleting]);
+  const utils = trpc.useUtils();
+
+  if (isLoading) return <>IsLoading</>;
 
   if (!data || data instanceof TRPCError) {
     return <>error</>;
   }
-
-  const utils = trpc.useUtils();
 
   const count = data.data.count;
   const images = data.data.files;
@@ -80,7 +76,7 @@ function Images() {
             images.map((img) => (
               <div
                 key={img.id}
-                className='group relative h-[117px] w-[162px] overflow-hidden'
+                className='group relative h-[117px] w-[157.5px] overflow-hidden lg:w-[165px]'
               >
                 <Image
                   src={`https://utfs.io/f/${img.fileId}`}
@@ -88,7 +84,7 @@ function Images() {
                   key={img.id}
                   width={165}
                   height={117}
-                  className='object-cover'
+                  className='h-full w-full object-cover'
                 />
                 <div className='absolute inset-0'>
                   <DropdownMenu>

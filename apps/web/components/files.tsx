@@ -8,12 +8,12 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { trpc } from '@/utils/trpc';
 import { downloadFileFromURL } from '@/utils/utils';
 import { TRPCError } from '@trpc/server';
 import { fromMime } from 'human-filetypes';
 import { DownloadIcon, EllipsisIcon, TrashIcon } from 'lucide-react';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
 import Grid from './grid';
 import IconWrapper from './iconWrapper';
@@ -22,35 +22,29 @@ import Spinner from './icons/spinner';
 import UploadButton from './uploadButton';
 
 function Files() {
+  const windowSize = useWindowWidth();
+
   const { data } = trpc.files.getFiles.useQuery({
-    limit: 6,
+    limit: windowSize > 1024 ? 6 : 3,
     page: 1,
     fileType: 'document',
   });
 
   const {
     mutateAsync: deleteFile,
-    data: deleteData,
+    // data: deleteData,
     isLoading: isDeleting,
-  } = trpc.files.deleteFile.useMutation();
+  } = trpc.files.deleteFile.useMutation({
+    onSuccess: () => {
+      utils.files.getFiles.invalidate();
+    },
+  });
 
-  useEffect(() => {
-    if (deleteData && !isDeleting) {
-      if (deleteData instanceof TRPCError) {
-        console.log('there was some error while deleting');
-      } else {
-        console.log('Deleted file successfully');
-        utils.files.getFiles.invalidate();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteData, isDeleting]);
+  const utils = trpc.useUtils();
 
   if (!data || data instanceof TRPCError) {
     return <>error</>;
   }
-
-  const utils = trpc.useUtils();
 
   const count = data.data.count;
   const files = data.data.files;
@@ -81,7 +75,7 @@ function Files() {
               {files.map((file) => (
                 <div
                   key={file.id}
-                  className='group relative flex items-center gap-4 rounded-md p-2.5 transition-all duration-300 hover:bg-hover_grey'
+                  className='group relative col-span-2 row-span-1 flex items-center gap-4 rounded-md p-2.5 transition-all duration-300 hover:bg-hover_grey lg:col-span-1'
                 >
                   <PdfIcon />
                   <div className='space-y-1 overflow-hidden text-black/80'>

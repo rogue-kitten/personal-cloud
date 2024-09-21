@@ -30,8 +30,8 @@ export default async function Home() {
 
   return (
     <Hydrate state={dehydrate(helpers.queryClient)}>
-      <main className='h-screen w-screen bg-[url(https://www.icloud.com/system/icloud.com/current/wallpaper.webp)] bg-cover bg-center bg-no-repeat'>
-        <div className='mx-auto flex max-w-6xl flex-wrap py-10'>
+      <main className='min-h-screen w-full bg-[url(https://www.icloud.com/system/icloud.com/current/wallpaper.webp)] bg-cover bg-center bg-no-repeat'>
+        <div className='mx-auto flex max-w-[350px] flex-wrap py-24 md:max-w-[700px] lg:max-w-6xl'>
           <UserDetails />
           <Images />
           <Files />
