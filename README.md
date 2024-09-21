@@ -48,8 +48,12 @@ pnpm dev
 
 ## Openapi End point
 - You can access the openapi end point on your local system by using the following curl request
-```curl
+```sh
 curl --location 'https://personal-cloud-web-pearl.vercel.app/api/user?limit=1&page=1&name=nash' \
+--header 'x-api-key: foobarbaz'
+
+# or to access the same end point on your local dev server, use the following curl
+curl --location 'http://localhost:3000/api/user?limit=1&page=1&name=nash' \
 --header 'x-api-key: foobarbaz'
 ```
 
